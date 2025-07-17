@@ -8121,6 +8121,7 @@ declare namespace monaco.languages {
 	 * A provider of links.
 	 */
 	export interface LinkProvider {
+		onDidChange?: IEvent<this>;
 		provideLinks(model: editor.ITextModel, token: CancellationToken): ProviderResult<ILinksList>;
 		resolveLink?: (link: ILink, token: CancellationToken) => ProviderResult<ILink>;
 	}

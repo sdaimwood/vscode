@@ -1762,6 +1762,7 @@ export interface ILinksList {
  * A provider of links.
  */
 export interface LinkProvider {
+	onDidChange?: Event<this>;
 	provideLinks(model: model.ITextModel, token: CancellationToken): ProviderResult<ILinksList>;
 	resolveLink?: (link: ILink, token: CancellationToken) => ProviderResult<ILink>;
 }

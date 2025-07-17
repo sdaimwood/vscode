@@ -5363,6 +5363,11 @@ declare module 'vscode' {
 	export interface DocumentLinkProvider<T extends DocumentLink = DocumentLink> {
 
 		/**
+		 * An optional event to signal that the links from this provider have changed.
+		 */
+		onDidChangeDocumentLinks?: Event<void>;
+
+		/**
 		 * Provide links for the given document. Note that the editor ships with a default provider that detects
 		 * `http(s)` and `file` links.
 		 *

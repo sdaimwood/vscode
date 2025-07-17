@@ -796,7 +796,7 @@ export class MainThreadLanguageFeatures extends Disposable implements MainThread
 
 	// --- links
 
-	$registerDocumentLinkProvider(handle: number, selector: IDocumentFilterDto[], supportsResolve: boolean): void {
+	$registerDocumentLinkProvider(handle: number, selector: IDocumentFilterDto[], supportsResolve: boolean, eventHandle: number | undefined): void {
 		const provider: languages.LinkProvider = {
 			provideLinks: (model, token) => {
 				return this._proxy.$provideDocumentLinks(handle, model.uri, token).then(dto => {
@@ -814,6 +814,13 @@ export class MainThreadLanguageFeatures extends Disposable implements MainThread
 				});
 			}
 		};
+
+		if (typeof eventHandle === 'number') {
+			const emitter = new Emitter<languages.LinkProvider>();
+			this._registrations.set(eventHandle, emitter);
+			provider.onDidChange = emitter.event;
+		}
+
 		if (supportsResolve) {
 			provider.resolveLink = (link, token) => {
 				const dto: ILinkDto = link;
@@ -827,6 +834,14 @@ export class MainThreadLanguageFeatures extends Disposable implements MainThread
 		}
 		this._registrations.set(handle, this._languageFeaturesService.linkProvider.register(selector, provider));
 	}
+
+	$emitDocumentLinkEvent(eventHandle: number, event?: AnyARecord): void {
+		const obj = this._registrations.get(eventHandle);
+		if (obj instanceof Emitter) {
+			obj.fire(event);
+		}
+	}
+
 
 	// --- colors
 
